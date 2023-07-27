@@ -1,0 +1,57 @@
+#:import Window kivy.core.window.Window
+ScreenManager:
+    id: screen_manager
+    #transition: FadeTransition()
+    ScreenOne:
+        id: menu_screen
+        name: 'ScreenOne'
+        manager: 'screen_manager'
+<ScreenOne>
+    id: screen_one
+    GridLayout:
+        cols: 1
+        TitlebarNavigation:
+        
+        ScrollView:
+            size_hint: (1, None)
+            size: (Window.width, Window.height)
+            Label:
+                text: 'Yo'
+            
+
+<TitlebarNavigation>
+    pos_hint: {'top':1}
+    ActionView:
+        use_separator: True
+        ActionPrevious:
+            title: 'Strum'
+            with_previous: False
+        ActionOverflow:
+        ActionButton:
+            icon: 'atlas://data/images/defaulttheme/audio-volume-high'
+                
+        ActionButton:
+            id: gallery_status
+            text: 'Btn2'
+            on_press: print("aa") # app.root.get_screen(app.root.current).do_print()
+        ActionButton:
+            text: 'Btn3'
+            on_press: app.root.get_screen(app.root.current).do_print()
+        ActionButton:
+            id: btn4
+            text: 'Btn4'
+        ActionGroup:
+            text: 'Group1'
+            ActionButton:
+                text: 'Btn5'
+            ActionButton:
+                text: 'Btn6'
+            ActionButton:
+
+                text: 'Btn7'
+
+<Message@Popup>:
+    auto_dismiss: False
+    Button:
+        text: "Please for new account to take effect"
+        on_release: root.dismiss()

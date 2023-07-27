@@ -1,0 +1,1 @@
+sudo docker exec -it buildozer bash -c 'DISPLAY=:0 ~/.buildozer/android/platform/android-sdk-20/tools/android'

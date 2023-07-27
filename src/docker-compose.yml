@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+
+  buildozer:
+    privileged: true
+    # mage: guysoft/p4a:p4a-py3-api28ndk21
+    image: p4a-py3-api28ndk21
+    #build: .
+    # For development uncomment this and comment the image name above
+    #build: .
+    container_name: buildozer-midi
+    tty: true
+    entrypoint: /bin/sh
+    volumes:
+      - ./:/buildozer/
+      - root_buildozer-midi:/root/.buildozer
+      - ../../python-for-android:/p4a
+      - /dev/bus/usb:/dev/bus/usb 
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+
+volumes:
+  root_buildozer-midi:
