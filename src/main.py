@@ -15,15 +15,23 @@ from kivy.properties import NumericProperty, StringProperty, ObjectProperty, Lis
 # from kivy.lang import Builder
 from kivy.factory import Factory
 import os
+import sys
 import time
 # import android.media.midi.MidiManager
-from plyer.platforms.android import activity
-from jnius import autoclass, cast
-from android_midi import OpenMidiSendDeviceListener, get_midi_ports_list
 
-# Plyer clases
-MidiManager = autoclass('android.media.midi.MidiManager')
-Context = autoclass('android.content.Context')
+import plyer
+
+def get_platform():
+    return plyer.utils.platform._get_platform()
+
+if get_platform() == "android":
+    from plyer.platforms.android import activity
+    from jnius import autoclass, cast
+    from android_midi import OpenMidiSendDeviceListener, get_midi_ports_list
+
+    # Android clases
+    MidiManager = autoclass('android.media.midi.MidiManager')
+    Context = autoclass('android.content.Context')
 
 # Create the manager
 sm = ScreenManager()
@@ -50,29 +58,33 @@ class ScreenOne(Screen):
         self.midi_listner = None
         
         print("Testing midi")
-        
-        midi_devices = get_midi_ports_list()
-        for name, device in midi_devices:
-            if name == "MIDI Connector Free Virtual Port 1":
-                print("Yay")
-                print(device.getOutputPortCount())
-                print(device.getInputPortCount())
-                
-                service = activity.getSystemService(Context.MIDI_SERVICE)
-                m = cast('android.media.midi.MidiManager', service)
-                
-                self.midi_listner = OpenMidiSendDeviceListener(self.midi_started_callback)
-                m.openDevice(device, self.midi_listner, None)
-                
-                print("Opened midi device")
-                break
 
-        print("Done loading midi")
+        if get_platform() == "android":
+            midi_devices = get_midi_ports_list()
+            for name, device in midi_devices:
+                if name == "MIDI Connector Free Virtual Port 1":
+                    print("Yay")
+                    print(device.getOutputPortCount())
+                    print(device.getInputPortCount())
+                    
+                    service = activity.getSystemService(Context.MIDI_SERVICE)
+                    m = cast('android.media.midi.MidiManager', service)
+                    
+                    self.midi_listner = OpenMidiSendDeviceListener(self.midi_started_callback)
+                    m.openDevice(device, self.midi_listner, None)
+                    
+                    print("Opened midi device")
+                    break
+
+            print("Done loading midi")
+        else:
+            print(f"midi not implemented for: {get_platform()}")
         
     def do_print(self):
-        self.midi_listner.note_on(b'\x78')
-        time.sleep(0.2)
-        self.midi_listner.note_off(b'\x78')
+        if get_platform() == "android":
+            self.midi_listner.note_on(b'\x78')
+            time.sleep(0.2)
+            self.midi_listner.note_off(b'\x78')
         print("Button pressed")
 
 class TitlebarNavigation(ActionBar):
