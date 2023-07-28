@@ -11,18 +11,22 @@ from kivy.core.image import Image as CoreImage
 from kivy.uix.actionbar import ActionBar
 from kivy.uix.image import Image
 from kivy.uix.popup import Popup
-from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty
+from kivy.app import App
+from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, NumericProperty
 # from kivy.lang import Builder
 from kivy.factory import Factory
+from kivy.uix.widget import Widget
+from kivy.graphics import Rectangle, Color
 import os
 import sys
 import time
+from kivy.utils import platform
 # import android.media.midi.MidiManager
 
 import plyer
 
 def get_platform():
-    return plyer.utils.platform._get_platform()
+    return platform
 
 if get_platform() == "android":
     from plyer.platforms.android import activity
@@ -45,6 +49,50 @@ def callback(scr_name, instance):
 def ensure_dir(d):
     if not os.path.exists(d):
         os.makedirs(d)
+
+
+class MultiTouchButton(Button):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            # self.text = f'Touch ID: {touch.id}'
+            print(self.text)
+
+    def on_touch_up(self, touch):
+        if self.collide_point(*touch.pos):
+            # self.text = 'Button'
+            print(self.text + "-")
+
+class CursorRectangle(Widget):
+    number = NumericProperty()
+
+    def __init__(self, **kwargs):
+        super(CursorRectangle, self).__init__(**kwargs)
+        Clock.schedule_once(self.on_start, .1)
+
+    def on_start(self, dt):
+        self.bind(pos=self.update_rect, size=self.update_rect)
+    
+        print(self.number)
+
+        with self.canvas:
+            if self.number % 2 == 0:
+                Color(0.5, 0.5, 0.5)
+            else:
+                Color(0.25, 0.25, 0.25)
+            
+            self.rect = Rectangle(pos=self.pos, size=self.size)
+
+        self.update_rect()
+
+    def on_touch_move(self, touch):
+        if self.collide_point(*touch.pos):
+            print(f"Cursor position inside Rectangle {self.number} {self.rect.pos} - x: {touch.pos[0]}, y: {touch.pos[1]}")
+        # else:
+        #     print("Cursor position outside Rectangle")
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
 
 class ScreenOne(Screen):
@@ -103,6 +151,10 @@ class Midistrum(App):
 
 
 if __name__ == '__main__':
+    if(platform == 'android' or platform == 'ios'):
+        Window.maximize()
+    else:
+        Window.size = (1024, 620)
     Midistrum().run()
 
 
