@@ -68,7 +68,10 @@ class OpenMidiSendDeviceListener(PythonJavaClass):
             
     def send_data_to_port(self, data):
         self.port_casted.send(data, 0, len(data))
-        
+
+    def send(self, data):
+        self.send_data_to_port(data)
+
     def note_on(self, note):
         data = b'\x90\x3D' + note
         # self.port_casted.send(data, 0, 3)
