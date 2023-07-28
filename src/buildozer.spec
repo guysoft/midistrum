@@ -40,7 +40,7 @@ version = 0.1
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
 #requirements = python3,kivy,requests,futures,openssl,numpy,opencv
-requirements = kivy==master,python3,png,openssl,requests,jnius,plyer,android
+requirements = kivy==master,python3,png,openssl,requests,jnius,plyer,android,mido,packaging,pretty_midi,pychord,numpy
 
 
 # (str) Custom source folders for requirements
