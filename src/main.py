@@ -62,6 +62,7 @@ class MultiTouchButton(Button):
         if self.collide_point(*touch.pos):
             # self.text = f'Touch ID: {touch.id}'
             print(self.text)
+            get_main_app().chord = self.text
 
     def on_touch_up(self, touch):
         if self.collide_point(*touch.pos):
@@ -99,17 +100,16 @@ class CursorRectangle(Widget):
             if not self.inside:
                 self.inside = True
                 print(f"Note on {self.number}")
-
-                threading.Thread(target=lambda: get_main_app().do_print(self.number),).start()
-
-                
-
+                threading.Thread(target=lambda: get_main_app().pluck_string(self.number),).start()
                 # Hangle pluck
         else:
             if self.inside:
                 self.inside = False
                 # Handle note off
                 print(f"Note off {self.number}")
+    
+    def on_touch_down(self,touch):
+        self.on_touch_move(touch)
             
             # print(f"Cursor position inside Rectangle {self.number} {self.rect.pos} - x: {touch.pos[0]}, y: {touch.pos[1]}")
         # else:
@@ -144,6 +144,7 @@ class ScreenOne(Screen):
     def __init__(self, **kwargs):
         Screen.__init__(self, **kwargs)
         self.midi_listner = None
+        self.chord = None
         
         print("Testing midi")
 
@@ -170,9 +171,9 @@ class ScreenOne(Screen):
 
 
 
-    def do_print(self, number=None):
+    def pluck_string(self, number=None):
         if get_platform() == "android":
-            scale = "C"
+            scale = self.chord
             chord_base = get_chords_base(scale)
             note = get_note_from_number(number, chord_base)
             if note < 127:
