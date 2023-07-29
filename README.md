@@ -1,7 +1,7 @@
 # Midistrum
 
-An app to use android's native midi system to create an omnichord/auto harp-like strum instrument.
-It also made me port native midi to kivy.
+An app to use android's native midi system to create an omnichord/auto harp-like strum instrument for android.
+It also made me port android native midi to kivy.
 
 work in progres
 
