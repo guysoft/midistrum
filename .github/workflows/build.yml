@@ -1,7 +1,7 @@
 name: Build
   on: 
-  push:
-  repository_dispatch:
+    push:
+    repository_dispatch:
 
 jobs:
   # Build job. Builds app for Android with Buildozer
