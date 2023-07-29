@@ -93,8 +93,8 @@ android.permissions = INTERNET
 #android.ant_path =
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
-p4a.source_dir = /p4a
-#p4a.branch = master
+# p4a.source_dir = /p4a
+p4a.branch = master
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 #p4a.local_recipes =
