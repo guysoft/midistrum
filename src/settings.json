@@ -1,5 +1,12 @@
 [
     {
+         "type": "midi",
+         "title": "MIDI output device",
+         "desc": "Device or app to receive MIDI from Midistrum",
+         "section": "Midistrum",
+         "key": "midi_device"
+    },
+    {
         "type": "string",
         "title": "Label caption",
         "desc": "Choose the text that appears in the label",
@@ -13,4 +20,5 @@
         "section": "Midistrum",
         "key": "press_time"
     }
+
 ]

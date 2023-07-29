@@ -11,10 +11,13 @@ from kivy.core.image import Image as CoreImage
 from kivy.uix.actionbar import ActionBar
 from kivy.uix.image import Image
 from kivy.uix.popup import Popup
+from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.scrollview import ScrollView
 from kivy.app import App
 from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, NumericProperty
 # from kivy.lang import Builder
 from kivy.factory import Factory
+from kivy.uix.settings import SettingItem
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color
 import os
@@ -42,6 +45,9 @@ if get_platform() == "android":
     # Android clases
     MidiManager = autoclass('android.media.midi.MidiManager')
     Context = autoclass('android.content.Context')
+else:
+    import pygame.midi
+    pygame.midi.init()
 
 # Create the manager
 sm = ScreenManager()
@@ -122,6 +128,70 @@ class CursorRectangle(Widget):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
+class SettingMIDI(SettingItem):
+    popup = ObjectProperty(None, allownone=True)
+
+    def on_panel(self, instance, value):
+        if value is None:
+            return
+        self.bind(on_release=self._create_popup)
+
+    def _set_option(self, instance):
+        self.value = instance.text
+        self.popup.dismiss()
+
+    def _create_popup(self, instance):
+        global midi
+        root = ScrollView(size_hint=(1, None), size=(1, 200))
+
+        content = BoxLayout(orientation='vertical', spacing=10)
+        root.add_widget(content)
+        self.popup = popup = Popup(content=root,
+                                   title=self.title, size_hint=(1, 1), size=(1000, 1000))
+
+        if platform == 'android':
+            devices = get_midi_ports_list()
+            device_count = len(devices)
+            print(f'Len: {device_count}')
+        else:
+            device_count = pygame.midi.get_count()
+        print("heigt:")
+        height = device_count * 200 + 150 + 200
+        print(height)
+        popup.height = 150
+
+        # content.add_widget(Widget(size_hint_y=None, height=200))
+        uid = str(self.uid)
+
+        if platform == 'android':
+            for device_name, device in devices:
+                state = 'down' if device_name == self.value else 'normal'
+                btn = ToggleButton(text=device_name, state="normal", group=uid)
+                btn.bind(on_release=self._set_option)
+                content.add_widget(btn)
+
+            # for i in range(device_count):
+            #     for port in devices[i].getPorts():
+            #         if midi.getName(devices[i]) != 'MasterGrid' and (
+            #                 port.getType() == 2 or midi.getName(devices[i]) == self.value):
+            #             state = 'down' if midi.getName(devices[i]) == self.value else 'normal'
+                        
+        else:
+            for i in range(device_count):
+                if pygame.midi.get_device_info(i)[3] == 1 and (
+                        pygame.midi.get_device_info(i)[4] == 0 or pygame.midi.get_device_info(i)[
+                        1].decode() == self.value):
+                    state = 'down' if pygame.midi.get_device_info(i)[1].decode() == self.value else 'normal'
+                    btn = ToggleButton(text=pygame.midi.get_device_info(i)[1].decode(), state=state, group=uid)
+                    btn.bind(on_release=self._set_option)
+                    content.add_widget(btn)
+
+        btn = Button(text='Cancel', size_hint_y=None, height=50)
+        btn.bind(on_release=popup.dismiss)
+        content.add_widget(btn)
+
+        popup.open()
+
 def get_chords_base(chord_name):
     print(chord_name)
 
@@ -146,17 +216,12 @@ class ScreenOne(Screen):
         # self.midi_listner.play_test()
         return
 
-    def __init__(self, **kwargs):
-        Screen.__init__(self, **kwargs)
-        self.midi_listner = None
-        self.chord = None
-        
-        print("Testing midi")
+    def set_midi_device(self, device_name):
 
         if get_platform() == "android":
             midi_devices = get_midi_ports_list()
             for name, device in midi_devices:
-                if name == "MIDI Connector Free Virtual Port 1":
+                if name == device_name:
                     print("Yay")
                     print(device.getOutputPortCount())
                     print(device.getInputPortCount())
@@ -169,10 +234,19 @@ class ScreenOne(Screen):
                     
                     print("Opened midi device")
                     break
-
             print("Done loading midi")
         else:
             print(f"midi not implemented for: {get_platform()}")
+
+    def __init__(self, **kwargs):
+        Screen.__init__(self, **kwargs)
+        self.midi_listner = None
+        self.chord = None
+        self.url_popup = AboutPopup(title='About Midistrum')
+
+        midi_device = App.get_running_app().config.get("Midistrum", "midi_device")
+        self.set_midi_device(midi_device) 
+        print("Testing midi")
 
 
 
@@ -200,6 +274,13 @@ class TitlebarNavigation(ActionBar):
     def __init__(self, **kwargs):
         ActionBar.__init__(self, **kwargs)
 
+class AboutPopup(Popup):
+    def __init__(self, **kwargs):
+        super(AboutPopup, self).__init__(**kwargs)
+
+    def open_url(self):
+        import webbrowser
+        webbrowser.open("http://github.com/guysoft/midistrum")
         
 
 
@@ -211,7 +292,11 @@ class Midistrum(App):
         """
         Set the default values for the configs sections.
         """
-        config.setdefaults('Midistrum', {'text': 'Hello', 'press_time': 1000})
+        config.setdefaults('Midistrum', {
+            'text': 'Hello',
+            'press_time': 1000,
+            'midi_device': "",
+            })
         
     def build_settings(self, settings):
         """
@@ -220,11 +305,23 @@ class Midistrum(App):
         # We use the string defined above for our JSON, but it could also be
         # loaded from a file as follows:
         #     settings.add_json_panel('My Label', self.config, 'settings.json')
-
+        settings.register_type('midi', SettingMIDI)
         json_config_str = ""
         with open("settings.json") as f:
             json_config_str = f.read()
         settings.add_json_panel('Midistrum', self.config, data=json_config_str)
+
+    def on_config_change(self, config, section, key, value):
+        if key == 'midi_device':
+            # TODO CLOSE OLD
+            print("Set_Foncig")
+            try:
+                if get_main_app().midi_listner is not None:
+                    get_main_app().midi_listner.close()
+            except:
+                pass
+            midi_device = App.get_running_app().config.get("Midistrum", "midi_device")
+            get_main_app().set_midi_device(midi_device)
 
 
 if __name__ == '__main__':
