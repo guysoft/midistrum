@@ -9,11 +9,10 @@ ScreenManager:
 <ScreenOne>
     id: screen_one
     GridLayout:
-        cols: 1
-        TitlebarNavigation:
-
+        cols: 2
         GridLayout:
-            cols: 3
+            cols: 1
+            TitlebarNavigation:
             GridLayout:
                 cols: 12
                 MultiTouchButton:
@@ -92,41 +91,41 @@ ScreenManager:
                 MultiTouchButton:
                     text: "F#7"
 
-            Label:
-                text: ""
-                size_hint_x: None
-                width: 5
-                color: "white"
-            BoxLayout:
-                size_hint_x: None
-                width: 300
-                orientation: "vertical"
-                CursorRectangle:
-                    number: 12
-                CursorRectangle:
-                    number: 11
-                CursorRectangle:
-                    number: 10
-                CursorRectangle:
-                    number: 9
-                CursorRectangle:
-                    number: 8
-                CursorRectangle:
-                    number: 7
-                CursorRectangle:
-                    number: 6
-                CursorRectangle:
-                    number: 5
-                CursorRectangle:
-                    number: 4
-                CursorRectangle:
-                    number: 3
-                CursorRectangle:
-                    number: 2
-                CursorRectangle:
-                    number: 1
-                CursorRectangle:
-                    number: 0
+    # Label:
+    #     text: ""
+    #     size_hint_x: None
+    #     width: 5
+    #     color: "white"
+        BoxLayout:
+            size_hint_x: None
+            width: 300
+            orientation: "vertical"
+            CursorRectangle:
+                number: 12
+            CursorRectangle:
+                number: 11
+            CursorRectangle:
+                number: 10
+            CursorRectangle:
+                number: 9
+            CursorRectangle:
+                number: 8
+            CursorRectangle:
+                number: 7
+            CursorRectangle:
+                number: 6
+            CursorRectangle:
+                number: 5
+            CursorRectangle:
+                number: 4
+            CursorRectangle:
+                number: 3
+            CursorRectangle:
+                number: 2
+            CursorRectangle:
+                number: 1
+            CursorRectangle:
+                number: 0
 
 
 <TitlebarNavigation>
