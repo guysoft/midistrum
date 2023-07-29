@@ -10,7 +10,7 @@ title = midistrum
 package.name = midistrum
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.test
+package.domain = org.guysoft
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -31,11 +31,11 @@ source.include_exts = py,png,jpg,kv,atlas,json
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-version = 0.1
+# version = 0.1
 
 # (str) Application versioning (method 2)
-# version.regex = __version__ = ['"](.*)['"]
-# version.filename = %(source.dir)s/main.py
+version.regex = __version__ = ['"](.*)['"]
+version.filename = %(source.dir)s/main.py
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy

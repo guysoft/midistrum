@@ -30,6 +30,8 @@ from pychord import Chord
 
 # import android.media.midi.MidiManager
 
+__version__ = "0.1"
+
 CHROMATIC = 12
 
 import plyer
