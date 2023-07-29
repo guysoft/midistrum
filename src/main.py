@@ -58,10 +58,11 @@ def ensure_dir(d):
 
 
 class MultiTouchButton(Button):
+    text = StringProperty()
+
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
             # self.text = f'Touch ID: {touch.id}'
-            print(self.text)
             get_main_app().chord = self.text
 
     def on_touch_up(self, touch):
@@ -100,7 +101,8 @@ class CursorRectangle(Widget):
             if not self.inside:
                 self.inside = True
                 print(f"Note on {self.number}")
-                threading.Thread(target=lambda: get_main_app().pluck_string(self.number),).start()
+                press_time = App.get_running_app().config.get("Midistrum", "press_time")
+                threading.Thread(target=lambda: get_main_app().pluck_string(self.number, press_time,)).start()
                 # Hangle pluck
         else:
             if self.inside:
@@ -121,6 +123,8 @@ class CursorRectangle(Widget):
         self.rect.size = self.size
 
 def get_chords_base(chord_name):
+    print(chord_name)
+
     return [pretty_midi.note_name_to_number(f'{note_name}1') for note_name in Chord(chord_name).components()]
 
 def get_note_from_number(number, chord, shift = CHROMATIC):
@@ -172,16 +176,16 @@ class ScreenOne(Screen):
 
 
 
-    def pluck_string(self, number=None):
+    def pluck_string(self, number=None, press_time=1000):
         if get_platform() == "android":
             scale = self.chord
             chord_base = get_chords_base(scale)
             note = get_note_from_number(number, chord_base)
             if note < 127:
-                print(note)
+                print(note, press_time)
                 data = mido.Message('note_on', note=note).bin()
                 self.midi_listner.send(data)
-                time.sleep(2)
+                time.sleep(float(press_time) / 1000)
                 data = mido.Message('note_off', note=note).bin()
                 self.midi_listner.send(data)
             else:
@@ -203,7 +207,24 @@ print("################################################")
 
 
 class Midistrum(App):
-    pass
+    def build_config(self, config):
+        """
+        Set the default values for the configs sections.
+        """
+        config.setdefaults('Midistrum', {'text': 'Hello', 'press_time': 1000})
+        
+    def build_settings(self, settings):
+        """
+        Add our custom section to the default configuration object.
+        """
+        # We use the string defined above for our JSON, but it could also be
+        # loaded from a file as follows:
+        #     settings.add_json_panel('My Label', self.config, 'settings.json')
+
+        json_config_str = ""
+        with open("settings.json") as f:
+            json_config_str = f.read()
+        settings.add_json_panel('Midistrum', self.config, data=json_config_str)
 
 
 if __name__ == '__main__':

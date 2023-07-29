@@ -147,8 +147,9 @@ ScreenManager:
             text: 'Btn3'
             on_press: app.root.get_screen(app.root.current).do_print()
         ActionButton:
-            id: btn4
-            text: 'Btn4'
+            id: settings
+            text: 'Settings'
+            on_press: app.open_settings()
         ActionGroup:
             text: 'Group1'
             ActionButton:

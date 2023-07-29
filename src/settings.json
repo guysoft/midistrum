@@ -1,0 +1,16 @@
+[
+    {
+        "type": "string",
+        "title": "Label caption",
+        "desc": "Choose the text that appears in the label",
+        "section": "Midistrum",
+        "key": "text"
+    },
+    {
+        "type": "numeric",
+        "title": "Press Time",
+        "desc": "How long to hold a strum key down in millisecons",
+        "section": "Midistrum",
+        "key": "press_time"
+    }
+]
