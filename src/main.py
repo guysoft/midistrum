@@ -109,6 +109,7 @@ class CursorRectangle(Widget):
                 print(f"Note off {self.number}")
     
     def on_touch_down(self,touch):
+        self.inside = False
         self.on_touch_move(touch)
             
             # print(f"Cursor position inside Rectangle {self.number} {self.rect.pos} - x: {touch.pos[0]}, y: {touch.pos[1]}")
