@@ -10,7 +10,7 @@ title = midistrum
 package.name = midistrum
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.guysoft
+package.domain = com.gnethomelinux
 
 # (str) Source code where the main.py live
 source.dir = .
