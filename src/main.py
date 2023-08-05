@@ -30,8 +30,8 @@ from pychord import Chord
 
 # import android.media.midi.MidiManager
 
-__version__ = "v0.1.0"
-__version_code__ = 1000100
+__version__ = "v0.2.0"
+__version_code__ = 1000200
 
 CHROMATIC = 12
 
