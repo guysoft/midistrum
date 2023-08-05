@@ -166,6 +166,9 @@ eandroid.add_libs_armeabi = libs/android/*.so
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86
 android.archs = arm64-v8a
 
+# (str) The format used to package the app for release mode (aab or apk).
+android.release_artifact = apk
+
 #
 # iOS specific
 #
