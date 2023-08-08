@@ -1,0 +1,1 @@
+- same as initial release. Just added f-droid build requirements.
