@@ -1,1 +1,1 @@
-An app to use android's native midi system to create an omnichord/auto harp-like strum instrument.
+Use android's native midi system as an omnichord/auto harp-like strum instrument
