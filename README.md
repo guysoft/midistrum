@@ -5,6 +5,9 @@ It also made me port android native midi to kivy.
 
 Midistrum does not generate sound on its own, it needs a synth to send midi t. For example [fluidsynth](https://play.google.com/store/apps/details?id=net.volcanomobile.fluidsynthmidi&hl=en&gl=US). Or your PC over USB.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.gnethomelinux.midistrum/)
 
 ## Screenshot
 ![image](https://github.com/guysoft/midistrum/blob/main/media/screenshot.jpg?raw=true)
