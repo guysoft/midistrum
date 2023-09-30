@@ -9,12 +9,13 @@ Midistrum does not generate sound on its own, it needs a synth to send midi t. F
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.gnethomelinux.midistrum/)
 
+## Screenshot
+![image](https://github.com/guysoft/midistrum/blob/main/media/screenshot.jpg?raw=true)
+
 ## Tutorial
 
 [![Watch the video](https://img.youtube.com/vi/wS7LqcrN70k/hqdefault.jpg)](https://www.youtube.com/embed/wS7LqcrN70k)
 
-## Screenshot
-![image](https://github.com/guysoft/midistrum/blob/main/media/screenshot.jpg?raw=true)
 
 ## Build insrtuctions
 
