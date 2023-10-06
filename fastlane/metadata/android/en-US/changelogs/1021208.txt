@@ -1,0 +1,1 @@
+- Pin version of kivy 2.2.1 to fix regression where setting did not load
