@@ -1,0 +1,1 @@
+- Pin version of python because of symbol error on build on f-droid
