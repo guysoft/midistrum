@@ -40,7 +40,7 @@ version.filename = %(source.dir)s/main.py
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
 #requirements = python3,kivy,requests,futures,openssl,numpy,opencv
-requirements = kivy==2.2.1,python3,png,openssl,requests,jnius,plyer,android,mido,packaging,pretty_midi,pychord,numpy
+requirements = kivy==2.2.1,python3==3.8.15,png,openssl,requests,jnius,plyer,android,mido,packaging,pretty_midi,pychord,numpy
 
 
 # (str) Custom source folders for requirements
