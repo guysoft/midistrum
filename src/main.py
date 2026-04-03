@@ -84,15 +84,15 @@ def get_main_app():
 
 class CursorRectangle(Widget):
     number = NumericProperty()
-    inside = False
 
     def __init__(self, **kwargs):
         super(CursorRectangle, self).__init__(**kwargs)
+        self._active_touches = set()  # Per-touch tracking of which touches are inside
         Clock.schedule_once(self.on_start, .1)
 
     def on_start(self, dt):
         self.bind(pos=self.update_rect, size=self.update_rect)
-    
+
         print(self.number)
 
         with self.canvas:
@@ -100,32 +100,57 @@ class CursorRectangle(Widget):
                 Color(0.5, 0.5, 0.5)
             else:
                 Color(0.25, 0.25, 0.25)
-            
+
             self.rect = Rectangle(pos=self.pos, size=self.size)
 
         self.update_rect()
 
-    def on_touch_move(self, touch):
+    def _trigger_note(self):
+        """Trigger a note pluck in a separate thread."""
+        press_time = App.get_running_app().config.get("Midistrum", "press_time")
+        threading.Thread(
+            target=lambda: get_main_app().pluck_string(self.number, press_time)
+        ).start()
+
+    def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            if not self.inside:
-                self.inside = True
+            self._active_touches.add(touch.uid)
+            print(f"Note on {self.number}")
+            self._trigger_note()
+
+    def on_touch_move(self, touch):
+        currently_inside = self.collide_point(*touch.pos)
+
+        # Touch interpolation: check if the movement path from previous
+        # position to current position crosses through this widget.
+        # This fixes fast swipes skipping over rectangles on devices with
+        # lower touch sampling rates.
+        path_crossed = False
+        if not currently_inside:
+            move_bottom = min(touch.py, touch.y)
+            move_top = max(touch.py, touch.y)
+            move_left = min(touch.px, touch.x)
+            move_right = max(touch.px, touch.x)
+            path_crossed = (move_left < self.right and move_right > self.x and
+                            move_bottom < self.top and move_top > self.y)
+
+        if currently_inside or path_crossed:
+            if touch.uid not in self._active_touches:
+                self._active_touches.add(touch.uid)
                 print(f"Note on {self.number}")
-                press_time = App.get_running_app().config.get("Midistrum", "press_time")
-                threading.Thread(target=lambda: get_main_app().pluck_string(self.number, press_time,)).start()
-                # Hangle pluck
+                self._trigger_note()
+            if not currently_inside:
+                # Touch passed through but is now outside
+                self._active_touches.discard(touch.uid)
         else:
-            if self.inside:
-                self.inside = False
-                # Handle note off
+            if touch.uid in self._active_touches:
                 print(f"Note off {self.number}")
-    
-    def on_touch_down(self,touch):
-        self.inside = False
-        self.on_touch_move(touch)
-            
-            # print(f"Cursor position inside Rectangle {self.number} {self.rect.pos} - x: {touch.pos[0]}, y: {touch.pos[1]}")
-        # else:
-        #     print("Cursor position outside Rectangle")
+            self._active_touches.discard(touch.uid)
+
+    def on_touch_up(self, touch):
+        if touch.uid in self._active_touches:
+            print(f"Note off {self.number}")
+        self._active_touches.discard(touch.uid)
 
     def update_rect(self, *args):
         self.rect.pos = self.pos
