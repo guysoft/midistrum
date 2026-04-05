@@ -222,8 +222,18 @@ class SettingMIDI(SettingItem):
 
 def get_chords_base(chord_name):
     print(chord_name)
-
-    return [pretty_midi.note_name_to_number(f'{note_name}1') for note_name in Chord(chord_name).components()]
+    note_names = Chord(chord_name).components()
+    notes = []
+    octave = 1
+    prev = -1
+    for name in note_names:
+        n = pretty_midi.note_name_to_number(f'{name}{octave}')
+        while n <= prev:
+            octave += 1
+            n = pretty_midi.note_name_to_number(f'{name}{octave}')
+        notes.append(n)
+        prev = n
+    return notes
 
 def get_note_from_number(number, chord, shift = CHROMATIC):
     notes_in_chord = len(chord)
