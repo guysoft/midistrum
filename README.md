@@ -17,6 +17,10 @@ Midistrum does not generate sound on its own, it needs a synth to send midi t. F
 [![Watch the video](https://img.youtube.com/vi/wS7LqcrN70k/hqdefault.jpg)](https://www.youtube.com/embed/wS7LqcrN70k)
 
 
+## Donate
+Midistrum is 100% free and open source and maintained by Guy Sheffer. If it's helping your life, your organisation or makes you happy, please consider making a donation. It means I can code more and worry less about my balance. Any amount counts.
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=26VJ9MSBH3V3W&source=url)
+
 ## Build insrtuctions
 
 ```
@@ -33,3 +37,5 @@ Debug with:
 ```
 ./docker_debug
 ```
+
+
