@@ -25,3 +25,9 @@ jobs:
         with:
           name: package
           path: ${{ steps.buildozer.outputs.filename }}
+
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.ref_name }} ${{ steps.buildozer.outputs.filename }}
