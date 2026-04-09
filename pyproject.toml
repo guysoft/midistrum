@@ -1,0 +1,7 @@
+[project]
+name = "midistrum"
+description = "Omnichord-style MIDI strumming app for Android"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

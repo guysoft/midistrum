@@ -10,16 +10,30 @@ MidiInputPort = autoclass('android.media.midi.MidiInputPort')
 Context = autoclass('android.content.Context')
 
 
+def get_midi_device_display_name(dev_info_casted, index):
+    """Return a human-readable name for a MIDI device, with fallbacks."""
+    props = dev_info_casted.getProperties()
+    name = props.getString(MidiDeviceInfo.PROPERTY_NAME)
+    if name:
+        return name
+    product = props.getString(MidiDeviceInfo.PROPERTY_PRODUCT)
+    if product:
+        return product
+    manufacturer = props.getString(MidiDeviceInfo.PROPERTY_MANUFACTURER)
+    if manufacturer:
+        return manufacturer
+    return f"MIDI Device {index + 1}"
+
+
 def get_midi_ports_list():
     return_value = []
     service = activity.getSystemService(Context.MIDI_SERVICE)
     m = cast('android.media.midi.MidiManager', service)
     device_list = m.getDevices()
     
-    for dev_info in device_list:
+    for index, dev_info in enumerate(device_list):
         dev_info_casted = cast('android.media.midi.MidiDeviceInfo', dev_info)
-        # Java: deviceName = devInfo.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
-        device_name = dev_info_casted.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
+        device_name = get_midi_device_display_name(dev_info_casted, index)
         return_value.append((device_name, dev_info_casted))
     return return_value
 
