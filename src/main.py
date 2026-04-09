@@ -17,6 +17,7 @@ from kivy.app import App
 from kivy.properties import NumericProperty, StringProperty, ObjectProperty, ListProperty, NumericProperty
 # from kivy.lang import Builder
 from kivy.factory import Factory
+from kivy.uix.label import Label
 from kivy.uix.settings import SettingItem
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color
@@ -169,6 +170,20 @@ class SettingMIDI(SettingItem):
         self.popup.dismiss()
 
     def _create_popup(self, instance):
+        try:
+            self._build_midi_popup()
+        except Exception as e:
+            print(f"Error creating MIDI popup: {e}")
+            error_content = BoxLayout(orientation='vertical', padding=10, spacing=10)
+            error_content.add_widget(Label(text=f"Could not list MIDI devices:\n{e}"))
+            dismiss_btn = Button(text='OK', size_hint_y=None, height=50)
+            error_content.add_widget(dismiss_btn)
+            self.popup = Popup(title='MIDI Error', content=error_content,
+                               size_hint=(0.8, 0.4))
+            dismiss_btn.bind(on_release=self.popup.dismiss)
+            self.popup.open()
+
+    def _build_midi_popup(self):
         global midi
         root = ScrollView(size_hint=(1, None), size=(1, 200))
 
@@ -188,22 +203,15 @@ class SettingMIDI(SettingItem):
         print(height)
         popup.height = 150
 
-        # content.add_widget(Widget(size_hint_y=None, height=200))
         uid = str(self.uid)
 
         if platform == 'android':
             for device_name, device in devices:
+                display_name = device_name if device_name else "Unknown MIDI Device"
                 state = 'down' if device_name == self.value else 'normal'
-                btn = ToggleButton(text=device_name, state="normal", group=uid)
+                btn = ToggleButton(text=display_name, state="normal", group=uid)
                 btn.bind(on_release=self._set_option)
                 content.add_widget(btn)
-
-            # for i in range(device_count):
-            #     for port in devices[i].getPorts():
-            #         if midi.getName(devices[i]) != 'MasterGrid' and (
-            #                 port.getType() == 2 or midi.getName(devices[i]) == self.value):
-            #             state = 'down' if midi.getName(devices[i]) == self.value else 'normal'
-                        
         else:
             for i in range(device_count):
                 if pygame.midi.get_device_info(i)[3] == 1 and (
@@ -351,15 +359,17 @@ class Midistrum(App):
 
     def on_config_change(self, config, section, key, value):
         if key == 'midi_device':
-            # TODO CLOSE OLD
             print("Set_Foncig")
             try:
                 if get_main_app().midi_listner is not None:
                     get_main_app().midi_listner.close()
-            except:
-                pass
-            midi_device = App.get_running_app().config.get("Midistrum", "midi_device")
-            get_main_app().set_midi_device(midi_device)
+            except Exception as e:
+                print(f"Error closing previous MIDI device: {e}")
+            try:
+                midi_device = App.get_running_app().config.get("Midistrum", "midi_device")
+                get_main_app().set_midi_device(midi_device)
+            except Exception as e:
+                print(f"Error opening MIDI device: {e}")
 
 
 if __name__ == '__main__':
