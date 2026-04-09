@@ -185,12 +185,14 @@ class SettingMIDI(SettingItem):
 
     def _build_midi_popup(self):
         global midi
-        root = ScrollView(size_hint=(1, None), size=(1, 200))
+        content = BoxLayout(orientation='vertical', spacing=10, padding=10,
+                            size_hint_y=None)
+        content.bind(minimum_height=content.setter('height'))
 
-        content = BoxLayout(orientation='vertical', spacing=10)
+        root = ScrollView(size_hint=(1, 1))
         root.add_widget(content)
         self.popup = popup = Popup(content=root,
-                                   title=self.title, size_hint=(1, 1), size=(1000, 1000))
+                                   title=self.title, size_hint=(0.8, 0.8))
 
         if platform == 'android':
             devices = get_midi_ports_list()
@@ -198,10 +200,6 @@ class SettingMIDI(SettingItem):
             print(f'Len: {device_count}')
         else:
             device_count = pygame.midi.get_count()
-        print("heigt:")
-        height = device_count * 200 + 150 + 200
-        print(height)
-        popup.height = 150
 
         uid = str(self.uid)
 
@@ -209,7 +207,8 @@ class SettingMIDI(SettingItem):
             for device_name, device in devices:
                 display_name = device_name if device_name else "Unknown MIDI Device"
                 state = 'down' if device_name == self.value else 'normal'
-                btn = ToggleButton(text=display_name, state="normal", group=uid)
+                btn = ToggleButton(text=display_name, state=state, group=uid,
+                                   size_hint_y=None, height=50)
                 btn.bind(on_release=self._set_option)
                 content.add_widget(btn)
         else:
@@ -218,7 +217,8 @@ class SettingMIDI(SettingItem):
                         pygame.midi.get_device_info(i)[4] == 0 or pygame.midi.get_device_info(i)[
                         1].decode() == self.value):
                     state = 'down' if pygame.midi.get_device_info(i)[1].decode() == self.value else 'normal'
-                    btn = ToggleButton(text=pygame.midi.get_device_info(i)[1].decode(), state=state, group=uid)
+                    btn = ToggleButton(text=pygame.midi.get_device_info(i)[1].decode(), state=state, group=uid,
+                                       size_hint_y=None, height=50)
                     btn.bind(on_release=self._set_option)
                     content.add_widget(btn)
 
